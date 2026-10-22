@@ -54,6 +54,29 @@ tr zh>fr [text]
 
 Just wait for the translation results, and select one of them to copy into the clipboard.
 
+### Automatic Chinese-English translation
+
+In the plugin settings, set **Translation Mode** to **Chinese ↔ English**. Then use the same keyword for both directions:
+
+```text
+tr 你好世界     # Chinese → English
+tr hello world # English → Simplified Chinese
+```
+
+The plugin uses [tinyld](https://github.com/komodojp/tinyld) locally, with detection restricted to Chinese and English.
+Detected Chinese is translated into English; detected English is translated into Simplified Chinese.
+Mixed Chinese-English text follows the detected main language, so an English sentence containing a few Chinese characters can still be translated into Chinese.
+
+If tinyld cannot identify the language, a Chinese-character regular expression provides a fallback:
+text containing Chinese characters (including Traditional Chinese) is translated into English; other text is translated into Simplified Chinese.
+Numbers and punctuation also use this fallback. This mode is intended for Chinese-English translation, rather than arbitrary language detection.
+
+Explicit language prefixes, such as `tr zh>fr 你好`, `tr >en 你好`, `tr fr 你好`, or `tr en> hello`, override automatic mode.
+An omitted source or target in a prefix still uses the configured **Source Language Code** or **Target Language Code**.
+Language-pair quick selections continue to work as explicit prefixes.
+
+The default mode is **Configured direction**, which keeps the existing source and target language behavior.
+
 ## Configuration
 
 See Flow-Launcher plugin settings page.
