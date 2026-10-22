@@ -1,3 +1,4 @@
+import clipboard from 'clipboardy'
 import { describe, expect, it, vi } from 'vitest'
 import '../src/index'
 
@@ -33,6 +34,7 @@ vi.mock('flow-plugin', () => ({
 }))
 
 vi.mock('../src/axios', () => ({ createAxiosInstance: () => ({}) }))
+vi.mock('clipboardy', () => ({ default: { read: vi.fn(), writeSync: vi.fn() } }))
 vi.mock('../src/logger', () => ({ logger: { info: () => {} } }))
 vi.mock('../src/service', () => ({
   serviceNamesMap: { google: { en: 'Google', tr: 'Google', zh: '谷歌' } },
@@ -73,7 +75,7 @@ describe('automatic translation query flow', () => {
 
   it('shows automatic mode without relying on unused configured language codes', async () => {
     const items = await query('', { sourceLanguageCode: 'invalid', targetLanguageCode: 'invalid' })
-    expect(items).toHaveLength(1)
+    expect(items).toHaveLength(2)
     expect(items[0].title).toContain('↔')
   })
 
@@ -86,5 +88,30 @@ describe('automatic translation query flow', () => {
     const items = await query('', { languagePairs: 'zh>fr', triggerKeyword: 'tr' })
     const selectedQuery = items[1].jsonRPCAction!.query.replace(/^tr /, '')
     expect((await query(`${selectedQuery}你好`))[0].title).toBe('zh-CN>fr: 你好')
+  })
+
+  it('translates the complete clipboard through the empty-query entry', async () => {
+    vi.mocked(clipboard.read).mockResolvedValue('en\r\nhello\r\n\r\nworld')
+    const items = await query('')
+    const command = items.at(-1)!.jsonRPCAction!.query.replace(/^tr /, '')
+    expect((await query(command))[0].title).toBe('en>zh-CN: en\r\nhello\r\n\r\nworld')
+  })
+
+  it('automatically reads the clipboard only for empty queries when enabled', async () => {
+    vi.mocked(clipboard.read).mockResolvedValue('你好\n世界')
+    expect((await query('', { autoTranslateClipboard: 'True' }))[0].title).toBe('zh-CN>en: 你好\n世界')
+    expect((await query('hello', { autoTranslateClipboard: 'true' }))[0].title).toBe('en>zh-CN: hello')
+  })
+
+  it('honors explicit direction without treating clipboard text as a command', async () => {
+    vi.mocked(clipboard.read).mockResolvedValue('en hello\nworld')
+    expect((await query('zh>fr /clipboard'))[0].title).toBe('zh-CN>fr: en hello\nworld')
+  })
+
+  it('reports empty and unreadable clipboards', async () => {
+    vi.mocked(clipboard.read).mockResolvedValue(' \r\n')
+    expect((await query('/clipboard'))[0].title).toBe('剪贴板中没有文本')
+    vi.mocked(clipboard.read).mockRejectedValue(new Error('unavailable'))
+    expect((await query('/clipboard'))[0].title).toBe('无法读取剪贴板')
   })
 })

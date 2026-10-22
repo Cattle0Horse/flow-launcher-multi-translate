@@ -6,6 +6,7 @@ export interface Settings {
   translateDelay: number
   proxyUrl: string
   translationMode: 'configured' | 'zh-en'
+  autoTranslateClipboard: boolean
   sourceLanguageCode: LanguageCode
   targetLanguageCode: LanguageCode
   languagePairs: string[]
@@ -88,6 +89,7 @@ export function parseSettings(settings: Record<string, string>): Settings {
     translateDelay,
     proxyUrl,
     translationMode,
+    autoTranslateClipboard: String(settings.autoTranslateClipboard).toLowerCase() === 'true',
     sourceLanguageCode,
     targetLanguageCode,
     languagePairs,

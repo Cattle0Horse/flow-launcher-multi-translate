@@ -24,8 +24,7 @@
     "release": "bumpp",
     "start": "esno src/index.ts",
     "test": "vitest",
-    "typecheck": "tsc --noEmit",
-    "prepublishOnly": "nr build"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "axios": "^1.9.0",

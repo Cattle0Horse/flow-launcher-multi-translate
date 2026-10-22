@@ -19,6 +19,10 @@ const _dirname = path.resolve((path.dirname(fileURLToPath(import.meta.url))), '.
 const assetsPath = path.join(_dirname, 'assets')
 
 const messagesMap: Record<string, { en: string, tr: string, zh: string }> = {
+  clipboard: { en: 'Translate clipboard', tr: 'Panoyu çevir', zh: '翻译剪贴板内容' },
+  clipboardHint: { en: 'Translate complete clipboard text, including line breaks', tr: 'Satır sonları dahil pano metnini çevir', zh: '翻译剪贴板中的完整文本，保留换行' },
+  clipboardEmpty: { en: 'Clipboard contains no text', tr: 'Panoda metin yok', zh: '剪贴板中没有文本' },
+  clipboardError: { en: 'Unable to read clipboard', tr: 'Pano okunamadı', zh: '无法读取剪贴板' },
   unsupportedSourceLanguage: { en: 'Unsupported source language', tr: 'Desteklenmeyen kaynak dil', zh: '不支持的源语言' },
   unsupportedSourceLanguageSubtitle: { en: 'Please check your configuration.', tr: 'Lütfen yapılandırmanızı kontrol edin.', zh: '请检查您的配置。' },
   unsupportedTargetLanguage: { en: 'Unsupported target language', tr: 'Desteklenmeyen hedef dil', zh: '不支持的目标语言' },
@@ -50,12 +54,32 @@ function main() {
   flow.on('query', async ({ prompt, settings: rawSettings }, response) => {
     const settings = parseSettings(rawSettings as any)
     const { interfaceLanguage } = settings
-    const { sourceLanguageCode, targetLanguageCode, text } = parsePrompt(
+    let { sourceLanguageCode, targetLanguageCode, text } = parsePrompt(
       prompt,
       settings.sourceLanguageCode,
       settings.targetLanguageCode,
       settings.translationMode === 'zh-en',
     )
+    const useClipboard = text === '/clipboard' || (prompt.trim() === '' && settings.autoTranslateClipboard)
+    if (useClipboard) {
+      try {
+        text = await clipboard.read()
+      }
+      catch {
+        response.add({ title: messagesMap.clipboardError[interfaceLanguage], subtitle: '', icoPath: `${assetsPath}/warning.png` })
+        return
+      }
+      if (!text.trim()) {
+        response.add({ title: messagesMap.clipboardEmpty[interfaceLanguage], subtitle: '', icoPath: `${assetsPath}/info.png` })
+        return
+      }
+      // Detect the clipboard body without interpreting its first word as a language prefix.
+      if (settings.translationMode === 'zh-en' && (prompt.trim() === '' || prompt.trim() === '/clipboard')) {
+        const direction = parsePrompt(`\n${text}`, settings.sourceLanguageCode, settings.targetLanguageCode, true)
+        sourceLanguageCode = direction.sourceLanguageCode
+        targetLanguageCode = direction.targetLanguageCode
+      }
+    }
     const showAutomaticDirection = settings.translationMode === 'zh-en' && prompt.trim().length === 0
 
     const axiosInstance = getAxiosInstance(settings)
@@ -119,6 +143,14 @@ function main() {
             jsonRPCAction: Flow.Actions.changeQuery(`${settings.triggerKeyword} ${pair} `, { requery: true }),
           }
         }),
+        ...(prompt.trim() === ''
+          ? [{
+              title: messagesMap.clipboard[interfaceLanguage],
+              subtitle: messagesMap.clipboardHint[interfaceLanguage],
+              icoPath: `${assetsPath}/info.png`,
+              jsonRPCAction: Flow.Actions.changeQuery(`${settings.triggerKeyword} /clipboard`, { requery: true }),
+            }]
+          : []),
       )
       return
     }

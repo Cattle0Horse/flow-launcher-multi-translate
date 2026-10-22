@@ -54,6 +54,17 @@ tr zh>fr [text]
 
 Just wait for the translation results, and select one of them to copy into the clipboard.
 
+### Clipboard translation
+
+Copy text (including multiple lines), enter `tr`, and select **Translate clipboard**.
+You can also enter `tr /clipboard`, or `tr >fr /clipboard` to specify a direction.
+Clipboard text is passed as a whole without parsing language prefixes in its contents.
+Select a translation result to copy the full translation, including line breaks.
+
+Enable **自动翻译剪贴板 / Auto Translate Clipboard** to translate the clipboard immediately
+when entering only `tr`. This is off by default. Clipboard text is sent to the configured
+translation services. Empty or unreadable clipboards produce a message instead of a request.
+
 ### Automatic Chinese-English translation
 
 In the plugin settings, set **Translation Mode** to **Chinese ↔ English**. Then use the same keyword for both directions:

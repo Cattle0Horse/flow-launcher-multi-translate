@@ -1,5 +1,12 @@
 # yaml-language-server: $schema=https://www.flowlauncher.com/schemas/settings-template.schema.json
 body:
+  - type: checkbox
+    attributes:
+      name: autoTranslateClipboard
+      label: 自动翻译剪贴板 / Auto Translate Clipboard
+      description: Translate clipboard text when only the trigger keyword is entered. Sends clipboard text to the configured translation services.
+      defaultValue: false
+
   - type: dropdown
     attributes:
       name: interfaceLanguage
