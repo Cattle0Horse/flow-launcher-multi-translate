@@ -160,6 +160,33 @@ function renderPrompt(template: string, values: { from: string, to: string, text
   return template.replace(/\{(from|to|text)\}/g, (_, key: keyof typeof values) => values[key])
 }
 
+function createMessages(
+  text: string,
+  from: string,
+  to: string,
+  options: Settings['openAI'],
+) {
+  const names: Record<string, string | undefined> = {
+    ...languageNamesMap,
+    ...parseLanguageNames(options.languagesMapJson || ''),
+  }
+  const { systemPrompt, userPrompt } = options
+  const systemTemplate = systemPrompt?.trim()
+    ? systemPrompt
+    : 'You are a professional translation assistant. Translate the given text accurately and naturally. Only return the translated text without any explanations or additional content.'
+  const userTemplate = userPrompt?.trim()
+    ? userPrompt
+    : 'Translate the following text from {from} to {to}:\n\n{text}'
+  if (!userTemplate.includes('{text}')) {
+    throw new Error('OpenAI: Custom user prompt must include {text}. Please update OpenAI User Prompt in the plugin settings.')
+  }
+  const promptValues = { from: names[from] || from, to: names[to] || to, text }
+  return [
+    { role: 'system', content: renderPrompt(systemTemplate, promptValues) },
+    { role: 'user', content: renderPrompt(userTemplate, promptValues) },
+  ]
+}
+
 export async function translate(
   text: string,
   from: string,
@@ -175,43 +202,13 @@ export async function translate(
     return formatError(new Error('OpenAI: Model is not configured. Please set OPENAI_MODEL in Service Configs.'))
   }
 
-  let customNames: LanguagesMap
   try {
-    customNames = parseLanguageNames(_options.openAI.languagesMapJson || '')
-  }
-  catch (error) {
-    return formatError(error)
-  }
-  const names: Record<string, string | undefined> = { ...languageNamesMap, ...customNames }
-  const fromLang = names[from] || from
-  const toLang = names[to] || to
-  const { systemPrompt, userPrompt } = _options.openAI
-  const systemTemplate = systemPrompt?.trim()
-    ? systemPrompt
-    : 'You are a professional translation assistant. Translate the given text accurately and naturally. Only return the translated text without any explanations or additional content.'
-  const userTemplate = userPrompt?.trim()
-    ? userPrompt
-    : 'Translate the following text from {from} to {to}:\n\n{text}'
-  if (!userTemplate.includes('{text}')) {
-    return formatError(new Error('OpenAI: Custom user prompt must include {text}. Please update OpenAI User Prompt in the plugin settings.'))
-  }
-  const promptValues = { from: fromLang, to: toLang, text }
-
-  try {
+    const messages = createMessages(text, from, to, _options.openAI)
     const response = await axiosInstance.post(
       `${baseUrl}/v1/chat/completions`,
       {
         model,
-        messages: [
-          {
-            role: 'system',
-            content: renderPrompt(systemTemplate, promptValues),
-          },
-          {
-            role: 'user',
-            content: renderPrompt(userTemplate, promptValues),
-          },
-        ],
+        messages,
         temperature: 0.3,
         max_tokens: 2000,
       },

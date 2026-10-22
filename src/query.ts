@@ -2,6 +2,16 @@ import type { LanguageCode } from './service/language'
 import { detect } from 'tinyld'
 import { languageCodesArr } from './service/language'
 
+function detectChineseEnglish(text: string): 'zh' | 'en' {
+  // Restrict detection so short English words are not mistaken for other languages.
+  const detected = detect(text, { only: ['zh', 'en'] })
+  if (detected === 'zh' || detected === 'en')
+    return detected
+
+  // Fall back for inconclusive short text.
+  return /\p{Script=Han}/u.test(text) ? 'zh' : 'en'
+}
+
 export function parsePrompt(
   prompt: string,
   oldSourceLanguageCode: LanguageCode,
@@ -43,12 +53,7 @@ export function parsePrompt(
   }
 
   if (chineseEnglishTranslation && prompt.trim().length > 0) {
-    // Restrict detection to this mode's languages so short English words are not
-    // mistaken for unrelated languages. Fall back for inconclusive short text.
-    const detected = detect(prompt, { only: ['zh', 'en'] })
-    const source = detected === 'zh' || detected === 'en'
-      ? detected
-      : /\p{Script=Han}/u.test(prompt) ? 'zh' : 'en'
+    const source = detectChineseEnglish(prompt)
     return {
       sourceLanguageCode: source,
       targetLanguageCode: source === 'zh' ? 'en' : 'zh',
