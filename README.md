@@ -77,6 +77,22 @@ Language-pair quick selections continue to work as explicit prefixes.
 
 The default mode is **Configured direction**, which keeps the existing source and target language behavior.
 
+## Build and install locally
+
+```powershell
+pnpm install --frozen-lockfile
+pnpm package
+```
+
+The build produces `release/MultiTranslate/` and `release/MultiTranslate-<version>.zip`.
+Both contain only the ESM runtime, production dependencies, plugin settings, icons, and licenses.
+Node.js and pnpm are required to build; they are not included in the archive.
+
+Exit Flow Launcher, then copy the contents of `release/MultiTranslate/` into
+`%APPDATA%\FlowLauncher\Plugins\MultiTranslate` (or `UserData\Plugins\MultiTranslate`
+for a portable installation). Restart Flow Launcher and use `tr hello world`.
+Replace the old plugin folder when updating to avoid retaining obsolete files.
+
 ## Configuration
 
 See Flow-Launcher plugin settings page.

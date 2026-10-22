@@ -16,10 +16,10 @@
   "sideEffects": false,
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
   "scripts": {
     "dev": "unbuild --watch",
     "build": "unbuild",
+    "package": "pnpm build && node scripts/package.mjs",
     "lint": "eslint .",
     "release": "bumpp",
     "start": "esno src/index.ts",

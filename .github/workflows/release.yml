@@ -22,6 +22,8 @@ jobs:
         with:
           node-version: 20.17.0
 
+      - uses: pnpm/action-setup@v4
+
       - name: Get version
         id: version
         uses: notiz-dev/github-action-json-property@release
@@ -33,11 +35,8 @@ jobs:
 
       - name: Install dependencies and build
         run: |
-          npm install
-          npm run build
-          rm -rf node_modules
-          npm ci --only=production
-          zip -r MultiTranslate-${{steps.version.outputs.prop}}.zip . -x '*.git*'
+          pnpm install --frozen-lockfile
+          pnpm package
 
       - run: npx changelogithub
         env:
@@ -46,7 +45,7 @@ jobs:
       - name: Upload release assets
         uses: softprops/action-gh-release@v1
         with:
-          files: 'MultiTranslate-${{steps.version.outputs.prop}}.zip'
+          files: 'release/MultiTranslate-${{steps.version.outputs.prop}}.zip'
           tag_name: 'v${{steps.version.outputs.prop}}'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
