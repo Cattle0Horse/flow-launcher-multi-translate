@@ -113,6 +113,39 @@ OPENAI_MODEL=gpt-3.5-turbo
 > Note: `OPENAI_BASE_URL` defaults to `https://api.openai.com` if not set.
 > You can use other OpenAI-compatible API like [SiliconFlow](https://www.siliconflow.com/).
 
+### Custom OpenAI prompts
+
+Use the separate **OpenAI System Prompt** and **OpenAI User Prompt** multiline fields in the plugin settings.
+The system prompt controls translation style, terminology, and output requirements; the user prompt defines the translation request.
+Leave either field blank (or whitespace-only) to use its built-in prompt. Nonblank prompts keep their original formatting and line breaks.
+
+Both fields support these placeholders:
+
+| Placeholder | Value |
+| --- | --- |
+| `{from}` | Source language's full English name, such as `English`, or `auto` for service-side detection |
+| `{to}` | Target language's full English name, such as `Chinese Simplified` |
+| `{text}` | The original text to translate |
+
+Example system prompt:
+
+```text
+You are a professional translator from {from} to {to}.
+Preserve Markdown formatting and technical terminology. Return only the translation.
+```
+
+Example user prompt:
+
+```text
+Translate the following text from {from} to {to}:
+
+{text}
+```
+
+Custom user prompts must include `{text}`. If it is missing, the plugin reports a configuration error and sends no translation request.
+Placeholders can be repeated. Text inserted through `{text}` is kept literal, so braces or dollar signs in the source are not interpreted as template instructions.
+These settings also apply to OpenAI-compatible services using the OpenAI adapter.
+
 ## Language Codes List
 
 + I can only ensure the common languages are supported.
