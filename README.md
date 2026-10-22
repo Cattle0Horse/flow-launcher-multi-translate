@@ -81,6 +81,11 @@ The default mode is **Configured direction**, which keeps the existing source an
 
 See Flow-Launcher plugin settings page.
 
+Settings changed in that page are read again for each query; the next query uses the new values without restarting the plugin or application.
+If the search text is unchanged and previous results are still displayed, press **Ctrl+R** to run the query again.
+Flow Launcher handles persistence and saves plugin settings when its settings window closes; this plugin does not add query-driven saves or save each keystroke.
+Changes to the settings page definition (`SettingsTemplate.yaml`) itself require the host to reload that definition.
+
 ### Service Configs
 
 + DeepLX: Set your DeepLX URL.
