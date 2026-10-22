@@ -123,8 +123,8 @@ Both fields support these placeholders:
 
 | Placeholder | Value |
 | --- | --- |
-| `{from}` | Source language's full English name, such as `English`, or `auto` for service-side detection |
-| `{to}` | Target language's full English name, such as `Chinese Simplified` |
+| `{from}` | Source language name, using OpenAI Languages Map overrides or the built-in name (`auto` for service-side detection) |
+| `{to}` | Target language name, using OpenAI Languages Map overrides or the built-in name |
 | `{text}` | The original text to translate |
 
 Example system prompt:
@@ -145,6 +145,22 @@ Translate the following text from {from} to {to}:
 Custom user prompts must include `{text}`. If it is missing, the plugin reports a configuration error and sends no translation request.
 Placeholders can be repeated. Text inserted through `{text}` is kept literal, so braces or dollar signs in the source are not interpreted as template instructions.
 These settings also apply to OpenAI-compatible services using the OpenAI adapter.
+
+### Custom OpenAI language names
+
+Set **OpenAI Languages Map** to a JSON object to override the names inserted into `{from}` and `{to}`:
+
+```json
+{
+  "zh": "简体中文",
+  "en": "英语"
+}
+```
+
+Only listed languages are overridden; other languages retain their built-in names.
+Leave the field blank to use all built-in names. Keys must be supported plugin language codes (including `auto`), and values must be non-empty strings.
+Invalid JSON, unsupported codes, or invalid values produce a configuration error for OpenAI and no OpenAI request is sent.
+This setting affects only OpenAI prompt language names; other translation services retain their own language mappings.
 
 ## Language Codes List
 

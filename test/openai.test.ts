@@ -97,4 +97,32 @@ describe('openai prompt configuration', () => {
       { role: 'user', content: `${text}\n${text}\n{unknown}` },
     ])
   })
+
+  it('uses custom language names in both prompts', async () => {
+    const { messages } = await requestTranslation({
+      openaiLanguagesMap: '{"en":"英语","zh":"简体中文"}',
+      openaiSystemPrompt: '从{from}译成{to}。',
+      openaiUserPrompt: '{from} → {to}: {text}',
+    })
+    expect(messages).toEqual([
+      { role: 'system', content: '从英语译成简体中文。' },
+      { role: 'user', content: '英语 → 简体中文: hello' },
+    ])
+  })
+
+  it('keeps built-in names for languages omitted from custom mappings', async () => {
+    const custom = await requestTranslation({ openaiLanguagesMap: '{"zh":"中文"}' })
+    expect(custom.messages[1].content).toBe('Translate the following text from English to 中文:\n\nhello')
+    const defaults = await requestTranslation()
+    expect(defaults.messages[1].content).toBe('Translate the following text from English to Chinese Simplified:\n\nhello')
+  })
+
+  it.each(['{', 'null', '[]', '{"zh":123}', '{"zh":"  "}', '{"unknown":"语言"}'])(
+    'reports invalid language mappings %s without sending a request',
+    async (mapping) => {
+      const { messages, result } = await requestTranslation({ openaiLanguagesMap: mapping })
+      expect(result).toContain('OpenAI Languages Map')
+      expect(messages).toEqual([])
+    },
+  )
 })

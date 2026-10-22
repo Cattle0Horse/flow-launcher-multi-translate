@@ -64,13 +64,26 @@ body:
 
   - type: textarea
     attributes:
+      name: openaiLanguagesMap
+      label: OpenAI Languages Map
+      description: >
+        Optional JSON object overriding the language names used in OpenAI prompt placeholders.
+
+        Example: {"zh":"简体中文","en":"英语"}
+
+        Keys must be supported language codes (including 'auto'); values must be non-empty strings.
+        Omitted languages keep their built-in names. Leave blank to use all built-in names.
+      defaultValue: ''
+
+  - type: textarea
+    attributes:
       name: openaiSystemPrompt
       label: OpenAI System Prompt
       description: >
         Optional instructions for translation style, terminology, and output format.
 
-        Supports {from}, {to}, and {text}. Language placeholders use full English language names,
-        or 'auto' when the source language is automatically detected by the translation service.
+        Supports {from}, {to}, and {text}. Language placeholders use the OpenAI Languages Map
+        overrides or built-in English language names ('auto' for service-side detection).
 
         Line breaks are preserved. Leave blank to use the built-in system prompt.
       defaultValue: ''

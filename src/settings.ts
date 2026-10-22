@@ -27,6 +27,7 @@ export interface Settings {
     model: string
     systemPrompt: string
     userPrompt: string
+    languagesMapJson: string
   }
 }
 
@@ -78,6 +79,7 @@ export function parseSettings(settings: Record<string, string>): Settings {
     model: serviceConfigs.OPENAI_MODEL || 'gpt-3.5-turbo',
     systemPrompt: settings.openaiSystemPrompt || '',
     userPrompt: settings.openaiUserPrompt || '',
+    languagesMapJson: settings.openaiLanguagesMap || '',
   }
 
   return {
