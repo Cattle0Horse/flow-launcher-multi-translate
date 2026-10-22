@@ -54,6 +54,8 @@ body:
 
         OpenAI (compatible with Azure OpenAI and other OpenAI-compatible APIs):
 
+        API key is optional for services without authentication:
+
         OPENAI_API_KEY=sk-xxxx
 
         OPENAI_BASE_URL=https://api.openai.com

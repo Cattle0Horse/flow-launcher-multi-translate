@@ -9,9 +9,11 @@ interface TranslationRequest {
 
 async function requestTranslation(overrides: Record<string, string> = {}, text = 'hello') {
   const requests: TranslationRequest[] = []
+  let authorization: unknown
   const client = axios.create({
     adapter: async (config) => {
       requests.push(JSON.parse(config.data))
+      authorization = config.headers.get('Authorization')
       return {
         data: { choices: [{ message: { content: '  你好  ' } }] },
         status: 200,
@@ -27,7 +29,7 @@ async function requestTranslation(overrides: Record<string, string> = {}, text =
     ...overrides,
   })
   const result = await translate(text, languagesMap.en!, languagesMap.zh!, client, settings)
-  return { messages: requests[0]?.messages ?? [], result }
+  return { messages: requests[0]?.messages ?? [], result, authorization }
 }
 
 describe('openai prompt configuration', () => {
@@ -125,4 +127,22 @@ describe('openai prompt configuration', () => {
       expect(messages).toEqual([])
     },
   )
+})
+
+describe('openai authentication', () => {
+  it('sends a bearer token when an API key is configured', async () => {
+    const { authorization, result } = await requestTranslation()
+    expect(authorization).toBe('Bearer test-key')
+    expect(result).toBe('你好')
+  })
+
+  it.each([
+    'OPENAI_MODEL=test-model',
+    'OPENAI_API_KEY=\nOPENAI_MODEL=test-model',
+    'OPENAI_API_KEY=  \t\nOPENAI_MODEL=test-model',
+  ])('translates without an authorization header for missing or blank keys %j', async (serviceConfigs) => {
+    const { authorization, result } = await requestTranslation({ serviceConfigs })
+    expect(result).toBe('你好')
+    expect(authorization).toBeUndefined()
+  })
 })

@@ -102,7 +102,7 @@ MTRAN_SERVER_TOKEN=YOUR_MTRAN_SERVER_TOKEN
 DEEPL_KEY=YOUR_DEEPL_KEY
 ```
 
-+ OpenAI: Set your OpenAI API key, base URL, and model. Compatible with OpenAI, and other OpenAI-compatible APIs.
++ OpenAI: Set your base URL, model, and API key if required by the service. Compatible with OpenAI, and other OpenAI-compatible APIs.
 
 ```ini
 OPENAI_API_KEY=sk-YOUR_API_KEY
@@ -112,6 +112,9 @@ OPENAI_MODEL=gpt-3.5-turbo
 
 > Note: `OPENAI_BASE_URL` defaults to `https://api.openai.com` if not set.
 > You can use other OpenAI-compatible API like [SiliconFlow](https://www.siliconflow.com/).
+
+For a local or other compatible service that does not require authentication, omit `OPENAI_API_KEY` or leave it empty.
+The plugin then sends no `Authorization` header. A nonblank key is sent as a Bearer token.
 
 ### Custom OpenAI prompts
 
