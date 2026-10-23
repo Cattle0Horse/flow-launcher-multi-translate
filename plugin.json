@@ -1,12 +1,12 @@
 {
-  "ID": "82df0b26-6ed3-1c0d-460f-99789fd5d0c4",
+  "ID": "6f5bf619-19f6-4afd-bcc6-a053cc2a0898",
   "ActionKeyword": "tr",
   "Name": "MultiTranslate",
   "Description": "A Flow-Launcher plugin that translates text using multiple translation services.",
-  "Author": "Lu-Jiejie",
+  "Author": "CattleHorse",
   "Version": "0.2.9",
   "Language": "typescript",
-  "Website": "https://github.com/Lu-Jiejie/flow-launcher-multi-translate",
+  "Website": "https://github.com/Cattle0Horse/flow-launcher-multi-translate",
   "ExecuteFileName": "./dist/index.mjs",
   "IcoPath": "assets/icon.png"
 }

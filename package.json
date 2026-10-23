@@ -4,14 +4,14 @@
   "version": "0.2.9",
   "packageManager": "pnpm@10.12.1",
   "description": "A Flow-Launcher plugin that translates text using multiple translation services.",
-  "author": "Lu-Jiejie <lu-jiejie@outlook.com>",
+  "author": "CattleHorse <cattlehorse@duck.com>",
   "license": "MIT",
-  "homepage": "https://github.com/Lu-Jiejie/flow-launcher-multi-translate#readme",
+  "homepage": "https://github.com/Cattle0Horse/flow-launcher-multi-translate#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Lu-Jiejie/flow-launcher-multi-translate.git"
+    "url": "git+https://github.com/Cattle0Horse/flow-launcher-multi-translate.git"
   },
-  "bugs": "https://github.com/Lu-Jiejie/flow-launcher-multi-translate/issues",
+  "bugs": "https://github.com/Cattle0Horse/flow-launcher-multi-translate/issues",
   "keywords": [],
   "sideEffects": false,
   "main": "./dist/index.mjs",
