@@ -44,7 +44,10 @@ export function parsePrompt(
     }
   }
 
-  const targetOnly = prefix.match(/^>?([a-z_]+)$/)
+  // In automatic mode, words such as "is", "it", and "hi" must stay in the text.
+  const targetOnly = chineseEnglishTranslation
+    ? prefix.match(/^>([a-z_]+)$/)
+    : prefix.match(/^>?([a-z_]+)$/)
   if (targetOnly) {
     const target = targetOnly[1] as LanguageCode
     if (languageCodesArr.includes(target)) {

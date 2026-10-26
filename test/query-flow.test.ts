@@ -67,6 +67,8 @@ describe('automatic translation query flow', () => {
   it.each([
     ['你好', 'zh-CN>en: 你好'],
     ['hello', 'en>zh-CN: hello'],
+    ['is this ok', 'en>zh-CN: is this ok'],
+    ['hi', 'en>zh-CN: hi'],
     ['This is an English sentence with the Chinese word 中文.', 'en>zh-CN: This is an English sentence with the Chinese word 中文.'],
     ['zh>fr 你好', 'zh-CN>fr: 你好'],
   ])('sends the selected direction to the service for %s', async (prompt, result) => {

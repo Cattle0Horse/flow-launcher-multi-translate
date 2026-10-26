@@ -7,6 +7,18 @@ describe('chinese-english translation', () => {
     ['你好世界', 'zh', 'en'],
     ['繁體中文測試', 'zh', 'en'],
     ['hello world', 'en', 'zh'],
+    ['is this ok', 'en', 'zh'],
+    ['it works fine', 'en', 'zh'],
+    ['my name is bob', 'en', 'zh'],
+    ['he said hello', 'en', 'zh'],
+    ['to be or not to be', 'en', 'zh'],
+    ['so what', 'en', 'zh'],
+    ['am i right', 'en', 'zh'],
+    ['as far as i know', 'en', 'zh'],
+    ['or not', 'en', 'zh'],
+    ['id like coffee', 'en', 'zh'],
+    ['hi', 'en', 'zh'],
+    ['fr hello', 'en', 'zh'],
     ['请解释这个 API', 'zh', 'en'],
     ['This is an English sentence with the Chinese word 中文.', 'en', 'zh'],
     ['𠮷', 'zh', 'en'],
@@ -23,7 +35,7 @@ describe('chinese-english translation', () => {
   it.each([
     ['zh>fr 你好', 'zh', 'fr', '你好'],
     ['>en hello', 'auto', 'en', 'hello'],
-    ['fr 你好', 'auto', 'fr', '你好'],
+    ['>fr 你好', 'auto', 'fr', '你好'],
     ['en> hello', 'en', 'de', 'hello'],
     ['en>zh', 'en', 'zh', ''],
   ] as const)('honors an explicit language prefix in %s', (prompt, source, target, text) => {
@@ -39,6 +51,18 @@ describe('chinese-english translation', () => {
       sourceLanguageCode: 'auto',
       targetLanguageCode: 'fr',
       text: '你好',
+    })
+  })
+
+  it.each([
+    ['fr hello', 'fr', 'hello'],
+    ['>fr hello', 'fr', 'hello'],
+    ['it works fine', 'it', 'works fine'],
+  ] as const)('keeps target prefixes in configured mode for %s', (prompt, target, text) => {
+    expect(parsePrompt(prompt, 'auto', 'en')).toEqual({
+      sourceLanguageCode: 'auto',
+      targetLanguageCode: target,
+      text,
     })
   })
 

@@ -82,7 +82,9 @@ If tinyld cannot identify the language, a Chinese-character regular expression p
 text containing Chinese characters (including Traditional Chinese) is translated into English; other text is translated into Simplified Chinese.
 Numbers and punctuation also use this fallback. This mode is intended for Chinese-English translation, rather than arbitrary language detection.
 
-Explicit language prefixes, such as `tr zh>fr 你好`, `tr >en 你好`, `tr fr 你好`, or `tr en> hello`, override automatic mode.
+Explicit language prefixes, such as `tr zh>fr 你好`, `tr >en 你好`, or `tr en> hello`, override automatic mode.
+In this mode, bare words are always text because English words such as `is`, `it`, and `hi` are also language codes.
+Use `tr >fr 你好` to specify a target language; the bare `tr fr 你好` form remains available in **Configured direction** mode.
 An omitted source or target in a prefix still uses the configured **Source Language Code** or **Target Language Code**.
 Language-pair quick selections continue to work as explicit prefixes.
 
